@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  php:
+    container_name: zrwskz-php
+    build: './Docker/php/'
+    networks:
+      - backend
+    volumes:
+      - ./src/:/var/www/html/
+  apache:
+    container_name: zrwskz-apache
+    build: './Docker/apache/'
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8180:80"
+    volumes:
+      - ./src/:/var/www/html/
+
+  mysql:
+    container_name: zrwskz-mysql
+    image: mysql:5.7.33
+    networks:
+      - backend
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+
+networks:
+  frontend:
+  backend:
